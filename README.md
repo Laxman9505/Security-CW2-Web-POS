@@ -1,6 +1,6 @@
 <!-- @format -->
 
-# UI/UX Final Project POS
+# Security CW2 POS
 
 ## Getting started
 
