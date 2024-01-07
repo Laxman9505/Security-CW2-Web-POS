@@ -2,7 +2,10 @@
 
 import { Alert, Button, Form, Input } from "antd";
 import React, { useEffect, useState } from "react";
+import { Modal as BootStrapModal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import Register from "./Register";
+
 function Login() {
   const dispatch = useDispatch();
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -42,12 +45,38 @@ function Login() {
       className="container-scroller h100 loginPage"
       style={{ background: "#fff" }}
     >
+      <BootStrapModal
+        size={isSendOTPSuccess ? "lg" : ""}
+        backdrop="static"
+        show={showRegisterModal}
+        footer={null}
+        title="Register Now"
+        className="register"
+        onHide={() => {
+          setShowRegisterModal(false);
+          dispatch({
+            type: "CLEAR_FORM",
+          });
+        }}
+        // width={"50vw"}
+        style={{ top: "2rem", padding: "15px" }}
+      >
+        <BootStrapModal.Header closeButton>
+          <BootStrapModal.Title id="example-modal-sizes-title-lg">
+            Register Now
+          </BootStrapModal.Title>
+        </BootStrapModal.Header>
+        <Register setShowRegisterModal={setShowRegisterModal} />
+      </BootStrapModal>
       {/* partial */}
       <div className="container pt-4 categoryField">
         <section className="">
           <div className="row  justify-content-center align-items-center d-flex-row text-center h-100">
             <div className="col-12 col-md-8  ">
-              <div className="card shadow" style={{ background: "#F0F2F5" }}>
+              <div
+                className="card rounder-corner"
+                style={{ background: "#F0F2F5" }}
+              >
                 <div className="card-body ">
                   <div className="d-flex gap-4 row">
                     <div className="col-md-6">
