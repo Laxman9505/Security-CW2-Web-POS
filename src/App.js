@@ -18,6 +18,7 @@ import Layout from "./Layouts/Layout";
 import "./Navbar.css";
 import Store from "./Redux/store";
 import "./index.css";
+import StripeTest from "./pages/StripeTest";
 
 function App() {
   const PageNotFound = React.lazy(() =>
@@ -38,6 +39,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/404" element={<PageNotFound />} />
+                <Route path="/stripe" element={<StripeTest />} />
               </Routes>
             </Layout>
           </React.Suspense>
