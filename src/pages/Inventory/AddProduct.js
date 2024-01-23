@@ -56,7 +56,7 @@ function AddProduct({ isEdit, setIsEdit }) {
 
     dispatch({
       type: "ADD_PRODUCT_REQUEST",
-      payload: { data: formData },
+      payload: { data: formData, csrfToken: csrfToken },
     });
   };
 

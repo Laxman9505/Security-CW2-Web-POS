@@ -1,7 +1,7 @@
 /** @format */
 
 import { Form, Pagination, Popconfirm, Tag } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import TableSkeleton from "../../components/Table Skeleton/TableSkeleton";
@@ -16,7 +16,15 @@ function ProductList() {
   const { allImages, isLoading, allProducts, totalProducts } = useSelector(
     (state) => state.inventoryReducer
   );
+  const [csrfToken, setCsrfToken] = useState("");
 
+  useEffect(() => {
+    // Fetch CSRF token from the server
+    fetch("http://localhost:8000/api/csrf-token")
+      .then((response) => response.json())
+      .then((data) => setCsrfToken(data.csrfToken))
+      .catch((error) => console.error(error));
+  }, []);
   useEffect(() => {
     if (searchKeyword) {
       const searchTimeout = setTimeout(async () => {
@@ -71,12 +79,15 @@ function ProductList() {
   const deleteProductHandler = (id, name) => {
     dispatch({
       type: "DELETE_PRODUCT_REQUEST",
-      payload: [
-        {
-          Id: id,
-          Name: name,
-        },
-      ],
+      payload: {
+        data: [
+          {
+            Id: id,
+            Name: name,
+          },
+        ],
+        csrfToken: csrfToken,
+      },
     });
   };
 

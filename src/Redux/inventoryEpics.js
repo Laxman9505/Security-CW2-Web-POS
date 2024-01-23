@@ -55,7 +55,13 @@ export const addProduct = (action$) =>
   action$.pipe(
     ofType("ADD_PRODUCT_REQUEST"),
     mergeMap((action) =>
-      from(API.post("/product/createUpdateProduct", action.payload)).pipe(
+      from(
+        API.post("/product/createUpdateProduct", action.payload?.data, {
+          headers: {
+            "CSRF-Token": action.payload?.csrfToken,
+          },
+        })
+      ).pipe(
         mergeMap((response) => {
           return of({
             type: "ADD_PRODUCT_SUCCESS",
