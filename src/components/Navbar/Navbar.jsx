@@ -2,17 +2,42 @@
 
 import { LogoutOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Drawer } from "antd";
+import nProgress from "nprogress";
 import React, { useEffect, useState } from "react";
+import Loadable from "react-loadable";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 
 function Navbar() {
+  const OrdersLoadable = Loadable({
+    loader: () => import("../../pages/Orders/Orders"),
+    loading: () => null,
+  });
+  const Dashboard = Loadable({
+    loader: () => import("../../pages/Home"),
+    loading: () => null,
+  });
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const dispatch = useDispatch();
   const { userDetails } = useSelector((state) => state.authenticationReducer);
 
+  const linkToComponent = {
+    "/": Dashboard,
+    "/orders/all": OrdersLoadable,
+  };
+
+  function handleNavigation(pathname, state = {}) {
+    const ComponentToLoad = linkToComponent[pathname];
+    if (ComponentToLoad) {
+      nProgress.start();
+      ComponentToLoad.preload().then(() => {
+        nProgress.done();
+        navigate(pathname, { state: state });
+      });
+    }
+  }
   useEffect(() => {
     setIsSidebarOpen(false);
   }, [window.location.pathname]);
@@ -28,7 +53,7 @@ function Navbar() {
         title={
           <a
             className="navbar-brand brand-logo"
-            // onClick={() => handleNavigation("/")}
+            onClick={() => handleNavigation("/")}
           >
             <img
               style={{ width: "60%" }}
@@ -51,7 +76,7 @@ function Navbar() {
       <div className="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
         <a
           className="navbar-brand brand-logo"
-          // onClick={() => handleNavigation("/")}
+          onClick={() => handleNavigation("/")}
         >
           <img src={"/assets/images/splash.png"} alt="logo" />
         </a>

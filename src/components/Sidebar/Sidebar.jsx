@@ -10,13 +10,25 @@ const Loading = () => null;
 function Sidebar({ isSidebarOpen }) {
   const navigate = useNavigate();
 
+  const OrdersLoadable = Loadable({
+    loader: () => import("../../pages/Orders/Orders"),
+    loading: Loading,
+  });
+
+  const InventoryLoadable = Loadable({
+    loader: () => import("../../pages/Inventory/Inventory"),
+    loading: Loading,
+  });
+
   const PosLoadable = Loadable({
     loader: () => import("../../pages/Pos"),
     loading: Loading,
   });
 
   const linkToComponent = {
+    "/orders/all": OrdersLoadable,
     "/pos": PosLoadable,
+    "/inventory/list": InventoryLoadable,
   };
 
   function handleNavigation(pathname) {
@@ -47,6 +59,26 @@ function Sidebar({ isSidebarOpen }) {
           <a className="nav-link" onClick={() => handleNavigation("/pos")}>
             <i className="fas fa-cash-register"></i>
             <span className="menu-title">POS</span>
+          </a>
+        </li>
+
+        <li className="nav-item">
+          <a
+            className="nav-link"
+            onClick={() => handleNavigation("/orders/all")}
+          >
+            <i className="fas fa-cloud-meatball"></i>
+            <span className="menu-title">Orders</span>
+          </a>
+        </li>
+
+        <li className="nav-item">
+          <a
+            className="nav-link"
+            onClick={() => handleNavigation("/inventory/list")}
+          >
+            <i className="fas fa-money-bill"></i>
+            <span className="menu-title">Inventory</span>
           </a>
         </li>
       </ul>

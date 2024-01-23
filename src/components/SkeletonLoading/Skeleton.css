@@ -1,0 +1,26 @@
+/** @format */
+
+.my-component {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.my-component .react-loading-skeleton {
+  width: 100%;
+  max-width: 800px;
+  height: 80vh;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}

@@ -124,7 +124,6 @@ function POSMenu({}) {
                                             className="btn btn-raised shadow my-button w-xs  me-2 homecart homelogin"
                                           >
                                             {" "}
-                                            <i className="fas fa-shopping-cart me-2" />
                                             Add
                                           </a>
                                         </div>
