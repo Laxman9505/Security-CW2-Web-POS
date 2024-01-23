@@ -1,5 +1,6 @@
 /** @format */
 
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import csrf from "csurf";
 import dotenv from "dotenv";
@@ -10,6 +11,7 @@ import orderModel from "./modal/orderModal";
 import authRouter from "./routes/auth";
 import productRouter from "./routes/inventory";
 import orderRouter from "./routes/order";
+
 import { CustomError, IErrorResponse } from "./utils/error-handler";
 
 const stripe = require("stripe")(
@@ -22,6 +24,8 @@ dotenv.config();
 
 const app = express();
 
+app.use(cookieParser());
+
 const csrfProtection = csrf({ cookie: true });
 app.use(csrfProtection);
 
@@ -31,21 +35,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// Endpoint to provide CSRF token to the frontend
-app.get("/api/csrf-token", (req, res) => {
-  res.json({ csrfToken: req.csrfToken() });
-});
-
 // Middleware
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: "http://localhost:3001" }));
 app.use(express.json());
 app.use(express.static("public"));
 // Mount the authentication routes
 app.use("/auth", authRouter);
 app.use("/product", productRouter);
 app.use("/order", orderRouter);
-
-app;
 
 app.use("/payment", async (req: Request, res: Response) => {
   const { amount, id } = req.body;
@@ -94,6 +91,11 @@ app.use("/payment", async (req: Request, res: Response) => {
       });
     }
   }
+});
+
+// Endpoint to provide CSRF token to the frontend
+app.get("/api/csrf-token", (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
 });
 
 app.use("/getDashboardData", async (req: Request, res: Response) => {

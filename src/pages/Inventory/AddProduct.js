@@ -19,8 +19,17 @@ function AddProduct({ isEdit, setIsEdit }) {
 
   const [image, setImage] = useState();
   const [imagePreview, setImagePreview] = useState();
+  const [csrfToken, setCsrfToken] = useState("");
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Fetch CSRF token from the server
+    fetch("http://localhost:8000/api/csrf-token")
+      .then((response) => response.json())
+      .then((data) => setCsrfToken(data.csrfToken))
+      .catch((error) => console.error(error));
+  }, []);
 
   useEffect(() => {
     if (addSuccess) {
@@ -47,7 +56,7 @@ function AddProduct({ isEdit, setIsEdit }) {
 
     dispatch({
       type: "ADD_PRODUCT_REQUEST",
-      payload: formData,
+      payload: { data: formData },
     });
   };
 
@@ -89,6 +98,8 @@ function AddProduct({ isEdit, setIsEdit }) {
       );
     }
   }, [state]);
+
+  console.log("---csrf token", csrfToken);
 
   return (
     <>
