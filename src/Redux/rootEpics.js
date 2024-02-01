@@ -9,6 +9,7 @@ import {
   loginEpic,
   registerOnBoardUserEpic,
   sendOTPtoMail,
+  validateOTPEpic,
 } from "./myEpics";
 import { getAllOrdersEpic, placeOrderEpic } from "./ordersEpic";
 
@@ -21,5 +22,6 @@ export const rootEpic = combineEpics(
   registerOnBoardUserEpic,
   getDashboardDataEpic,
   placeOrderEpic,
-  sendOTPtoMail
+  sendOTPtoMail,
+  validateOTPEpic
 );

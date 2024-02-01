@@ -29,7 +29,30 @@ export const loginEpic = (action$) =>
       )
     )
   );
-
+export const validateOTPEpic = (action$) =>
+  action$.pipe(
+    ofType("VALIDATE_OTP_REQUEST"),
+    mergeMap((action) =>
+      from(
+        API.post("/auth/verify-otp-and-login", {
+          ...action.payload,
+        })
+      ).pipe(
+        mergeMap((response) => {
+          return of({
+            type: "VALIDATE_OTP_SUCCESS",
+            payload: response.data,
+          });
+        }),
+        catchError((error) =>
+          of({
+            type: "VALIDATE_OTP_FAILURE",
+            payload: error.response,
+          })
+        )
+      )
+    )
+  );
 export const sendOTPtoMail = (action$) =>
   action$.pipe(
     ofType("SEND_OTP_REQUEST"),

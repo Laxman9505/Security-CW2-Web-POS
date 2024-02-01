@@ -4,10 +4,26 @@ import { Alert, Button, Form, Input } from "antd";
 import React, { useEffect, useState } from "react";
 import { Modal as BootStrapModal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Register from "./Register";
+
+const validatePassword = (rule, value, callback) => {
+  // Use a regular expression to check if the value is a valid password
+  const passwordRegex =
+    /^.*(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=£*_#]).*$/;
+
+  if (!passwordRegex.test(value)) {
+    callback(
+      "Password must contain one uppercase,one lowercase, number, special character and minimum 8 character ( Accepted Special Characters @#$%^&+=£*_# )"
+    );
+  } else {
+    callback(); // No error, so call the callback with no arguments
+  }
+};
 
 function Login() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const loginSubmitHandler = (values) => {
     dispatch({
@@ -20,16 +36,16 @@ function Login() {
   const {
     error,
     isLoading,
-    isLoggedIn,
+    isOTPSent,
     isOperationSuccessful,
     isSendOTPSuccess,
   } = useSelector((state) => state.authenticationReducer);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      window.location.replace("/");
+    if (isOTPSent) {
+      navigate("/verify-otp");
     }
-  }, [isLoggedIn]);
+  }, [isOTPSent]);
 
   useEffect(() => {
     if (isOperationSuccessful) {
@@ -140,6 +156,9 @@ function Login() {
                             {
                               required: true,
                               message: "Please input your password!",
+                            },
+                            {
+                              validator: validatePassword,
                             },
                           ]}
                         >

@@ -34,7 +34,7 @@ const csrfProtection = csrf({
     secure: process.env.NODE_ENV === "production", // Set to true in production
   },
 });
-app.use(csrfProtection);
+// app.use(csrfProtection);
 
 // Add CSRF token to the response locals to make it accessible in your views
 // app.use((req, res, next) => {

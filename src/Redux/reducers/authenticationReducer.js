@@ -55,26 +55,12 @@ export default function (state = initialState, action) {
 
     case "LOGIN_SUCCESS":
       console.log("---payload", payload);
-      setLocalStorage("token", payload.token);
-      setLocalStorage("userDetails", {
-        image: payload?.user?.UserImage,
-        name: payload?.user?.FullName,
-        userId: payload?.user?._id,
-      });
+      openNotificationWithIcon("success", payload?.message);
 
       return {
         ...state,
         isLoading: false,
-        succes: true,
-        data: payload,
-        token: payload.token,
-        isLoggedIn: true,
-        loginSuccess: true,
-        userDetails: {
-          image: payload?.user?.UserImage,
-          name: payload?.user?.FullName,
-          userId: payload?.user?._id,
-        },
+        isOTPSent: true,
       };
 
     case "LOGIN_FAILURE":
@@ -130,6 +116,36 @@ export default function (state = initialState, action) {
         isOperationSuccessful: false,
       };
 
+    case "VALIDATE_OTP_REQUEST":
+      return {
+        ...state,
+        isVerifyLoading: true,
+        isOTPVerifySuccess: false,
+      };
+    case "VALIDATE_OTP_SUCCESS":
+      setLocalStorage("token", payload.token);
+      setLocalStorage("userDetails", {
+        image: payload?.user?.UserImage,
+        name: payload?.user?.FullName,
+        userId: payload?.user?._id,
+      });
+      return {
+        ...state,
+        isVerifyLoading: false,
+        isOTPVerifySuccess: true,
+        // loginSuccess: true,
+        userDetails: {
+          image: payload?.user?.UserImage,
+          name: payload?.user?.FullName,
+          userId: payload?.user?._id,
+        },
+      };
+    case "VALIDATE_OTP_FAILURE":
+      return {
+        ...state,
+        isVerifyLoading: false,
+        isOTPVerifySuccess: false,
+      };
     case "LOGOUT":
       removeLocalStorage("token");
       removeLocalStorage("userDetails");

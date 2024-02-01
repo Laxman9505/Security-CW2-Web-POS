@@ -529,7 +529,7 @@ span {
 }
 .otp-container div {
   justify-content: space-between !important;
-  width: 100% !important;
+  /* width: 100% !important; */
 }
 .register .ant-form-item-label {
   text-align: left !important;

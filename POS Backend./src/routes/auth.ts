@@ -5,6 +5,7 @@ import {
   login,
   onBoardUser,
   sendOtpCodeToEmailOnBoarding,
+  validateOTP,
 } from "../contollers/authController";
 import upload from "../services/multer-config";
 
@@ -15,6 +16,8 @@ router.post("/send-otp", sendOtpCodeToEmailOnBoarding);
 
 // Endpoint to onboard a user
 router.post("/onboard", upload.single("image"), onBoardUser);
+
+router.post("/verify-otp-and-login", validateOTP);
 
 // Endpoint to login a user
 router.post("/login", login);

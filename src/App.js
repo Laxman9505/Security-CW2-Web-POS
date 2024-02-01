@@ -19,6 +19,7 @@ import "./Navbar.css";
 import Store from "./Redux/store";
 import "./index.css";
 import StripeTest from "./pages/StripeTest";
+import ValidateOTP from "./pages/ValidateOTP";
 
 function App() {
   const PageNotFound = React.lazy(() =>
@@ -43,6 +44,7 @@ function App() {
                 <Route path="/pos" element={<Pos />} />
                 <Route path="/orders/*" element={<Orders />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/verify-otp" element={<ValidateOTP />} />
                 <Route path="/inventory/*" element={<Inventory />} />
                 <Route path="/404" element={<PageNotFound />} />
                 <Route path="/stripe" element={<StripeTest />} />

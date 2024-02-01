@@ -10,6 +10,77 @@ import OtpModel from "../modal/otpModal";
 import userModel from "../modal/userModal";
 import transporter from "../utils/transporter";
 // Send OTP code to user's email during registration
+
+export async function sendOTPFor2fa(email: string) {
+  const otpCode = Math.floor(100000 + Math.random() * 900000);
+  await transporter.sendMail({
+    from: process.env.GOOGLE_USER_ID,
+    to: email,
+    subject: "2FA Verification",
+    html: `<!DOCTYPE html>
+<html>
+<head>
+  <title>OTP Email</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    h1 {
+      color: #333;
+      margin-top: 0;
+    }
+    p {
+      margin-bottom: 20px;
+    }
+    .otp {
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px;
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 5px;
+    }
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>POS System</h1>
+    <p>Dear User,</p>
+    <p>Your One-Time Password (OTP) for login is:</p>
+    <div class="otp">${otpCode}</div>
+    <p>Please enter this OTP to complete your login process.</p>
+    <div class="footer">
+      <p>Thank you!</p>
+    </div>
+  </div>
+</body>
+</html>
+`,
+  });
+  // Save the OTP in the database
+  const otpData = {
+    email: email,
+    otp: otpCode,
+    createdAt: new Date(),
+  };
+
+  await OtpModel.create(otpData);
+}
+
 export async function sendOtpCodeToEmailOnBoarding(
   req: Request,
   res: Response
@@ -296,6 +367,54 @@ export async function login(req: Request, res: Response) {
   foundUser.FailedLoginAttempts = 0;
   await foundUser.save();
 
+  await sendOTPFor2fa(Email);
+
+  return res.status(HTTP_STATUS.OK).json({
+    status: "success",
+    message: "OTP sent to your email for 2FA verification.",
+    statusCode: HTTP_STATUS.OK,
+  });
+
+  // const payload = {
+  //   userId: foundUser._id,
+  //   fullName: foundUser.FullName,
+  //   email: foundUser.Email,
+  // };
+  // const token = jwt.sign(payload, process.env.SIGNATURE || "", {
+  //   expiresIn: "1d",
+  // });
+  // const trimmedUser = _.omit(foundUser, [
+  //   "_v",
+  //   "_id",
+  //   "Password",
+  //   "ConfirmPassword",
+  // ]);
+  // return res.status(HTTP_STATUS.OK).json({ token, user: trimmedUser });
+}
+export async function validateOTP(req: Request, res: Response) {
+  const { Email, OTP } = req.body;
+  // Find the user by email
+  const foundUser = await userModel.findOne({ Email });
+
+  if (!foundUser) {
+    return res.status(HTTP_STATUS.BAD_REQUEST).json({
+      status: "error",
+      message: "Invalid Email!",
+      statusCode: HTTP_STATUS.BAD_REQUEST,
+    });
+  }
+  // Find the OTP in the database
+  const otpData = await OtpModel.findOne({ email: Email, otp: OTP });
+  if (!otpData) {
+    return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+      status: "error",
+      message: "Invalid OTP!",
+      statusCode: HTTP_STATUS.UNAUTHORIZED,
+    });
+  }
+  // Clear the OTP after successful verification
+  await OtpModel.deleteOne({ email: Email, otp: OTP });
+
   const payload = {
     userId: foundUser._id,
     fullName: foundUser.FullName,
@@ -304,11 +423,13 @@ export async function login(req: Request, res: Response) {
   const token = jwt.sign(payload, process.env.SIGNATURE || "", {
     expiresIn: "1d",
   });
+
   const trimmedUser = _.omit(foundUser, [
     "_v",
     "_id",
     "Password",
     "ConfirmPassword",
   ]);
+
   return res.status(HTTP_STATUS.OK).json({ token, user: trimmedUser });
 }

@@ -30,7 +30,14 @@ function Layout({ children }) {
   const path = location.pathname.split("/")[1];
   return (
     <>
-      {path == "404" || path == "login" || path == "register" ? "" : <Navbar />}
+      {path == "404" ||
+      path == "login" ||
+      path == "register" ||
+      path == "verify-otp" ? (
+        ""
+      ) : (
+        <Navbar />
+      )}
       {children}
     </>
   );
