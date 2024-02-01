@@ -14,6 +14,7 @@ import orderRouter from "./routes/order";
 
 import authMiddleware from "./middlewares/authMiddleware";
 import { CustomError, IErrorResponse } from "./utils/error-handler";
+import { logAPICall } from "./utils/logger";
 
 const stripe = require("stripe")(
   "sk_test_51KbjdEGbggZE4zd2eBc0ZkW9qtanwSpklg8Pg4rXgvrCCktxhwcuuiStW716aNaVmxOjQzZ7DYCz7ibce4fqCzHj00pnoJclSl"
@@ -27,19 +28,25 @@ const app = express();
 
 app.use(cookieParser());
 
-const csrfProtection = csrf({ cookie: true });
+const csrfProtection = csrf({
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // Set to true in production
+  },
+});
 app.use(csrfProtection);
 
 // Add CSRF token to the response locals to make it accessible in your views
-app.use((req, res, next) => {
-  res.locals.csrfToken = req.csrfToken();
-  next();
-});
+// app.use((req, res, next) => {
+//   res.locals.csrfToken = req.csrfToken();
+//   next();
+// });
 
 // Middleware
 app.use(cors({ origin: "http://localhost:3000" }));
 app.use(express.json());
 app.use(express.static("public"));
+app.use(logAPICall);
 // Mount the authentication routes
 app.use("/auth", authRouter);
 app.use("/product", authMiddleware, productRouter);

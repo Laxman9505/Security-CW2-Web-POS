@@ -8,6 +8,12 @@ import { paginate } from "../utils/paginate";
 
 export async function createUpdateProduct(req: Request, res: Response) {
   try {
+    if (!req.headers["Csrf-Token"]) {
+      return res
+        .status(403)
+        .json({ error: "CSRF token is missing or invalid" });
+    }
+
     console.log("Request body", req.body.Request);
     console.log("file", req.file);
     const RequestBody = JSON.parse(req.body.Request);
@@ -96,8 +102,6 @@ export async function deleteProduct(req: Request, res: Response) {
     const deletedProduct = await InventoryModel.findByIdAndRemove(
       toBeDeletedId
     );
-    console.log("deleted product", deletedProduct);
-
     if (!deletedProduct) {
       res.status(404).json({ message: "Product not found!" });
     } else {
