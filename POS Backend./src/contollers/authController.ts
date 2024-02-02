@@ -200,6 +200,13 @@ export async function onBoardUser(
         "Password must include uppercase letters, lowercase letters, numbers, and special characters.",
     });
   }
+  const commonPasswords = ["password", "123456", "qwerty"];
+  if (commonPasswords.includes(Password.toLowerCase())) {
+    return res.status(400).json({
+      message:
+        "Common passwords are not allowed. Choose a more unique password.",
+    });
+  }
 
   // ConfirmPassword check
   if (Password !== ConfirmPassword) {

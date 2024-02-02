@@ -17,7 +17,7 @@ const ValidateOTP = () => {
     dispatch({
       type: "VALIDATE_OTP_REQUEST",
       payload: {
-        Email: "yesopoc964@regapts.com",
+        Email: "gmx9505@gmail.com",
         OTP: otp,
       },
     });

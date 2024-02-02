@@ -3,8 +3,9 @@
 import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
-import { Badge } from "react-bootstrap";
+import { Badge, Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import StripeContainer from "../../pages/StripeContainer";
 
 function Billing({}) {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ function Billing({}) {
   const { placeOrderLoading, isPlaceOrderSuccess } = useSelector(
     (state) => state.ordersReducer
   );
+  const [isStripeOpen, setIsStripeOpen] = useState(false);
 
   useEffect(() => {
     const totalPrice = cartProducts.reduce((accumulator, item) => {
@@ -71,6 +73,15 @@ function Billing({}) {
 
   return (
     <>
+      <Modal show={isStripeOpen} onHide={() => setIsStripeOpen(false)}>
+        <Modal.Body>
+          <StripeContainer
+            placeOrderHandler={placeOrderHandler}
+            amount={itemsSubTotal}
+            setIsStripeOpen={setIsStripeOpen}
+          />
+        </Modal.Body>
+      </Modal>
       <div className="col-md-4 col-xxl-3 ">
         <div className="card">
           <div className="card-body">
@@ -137,7 +148,17 @@ function Billing({}) {
                   }}
                   disabled={cartProducts?.length == 0}
                   onClick={() => {
-                    placeOrderHandler();
+                    // placeOrderHandler();
+                    if (!customerName) {
+                      setCustomerNameError("Please enter customer name");
+                    }
+                    if (!customerAddress) {
+                      setCustomerAddressError("Please enter customer address");
+                    }
+                    if (!customerAddress || !customerAddress) {
+                      return;
+                    }
+                    setIsStripeOpen(true);
                   }}
                 >
                   Place An Order

@@ -1,8 +1,9 @@
 /** @format */
 
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import { Button } from "antd";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const CARD_OPTIONS = {
   iconStyle: "solid",
@@ -24,7 +25,11 @@ const CARD_OPTIONS = {
   },
 };
 
-export default function PaymentForm() {
+export default function PaymentForm({
+  placeOrderHandler,
+  amount,
+  setIsStripeOpen,
+}) {
   const [success, setSuccess] = useState(false);
   const stripe = useStripe();
   const elements = useElements();
@@ -40,7 +45,7 @@ export default function PaymentForm() {
       try {
         const { id } = paymentMethod;
         const response = await axios.post("http://localhost:8000/payment", {
-          amount: 1000,
+          amount: Number(amount),
           id,
         });
 
@@ -56,25 +61,26 @@ export default function PaymentForm() {
     }
   };
 
+  useEffect(() => {
+    if (success) {
+      placeOrderHandler();
+      setIsStripeOpen(false);
+    }
+  }, [success]);
+
   return (
     <>
-      {!success ? (
-        <form onSubmit={handleSubmit}>
-          <fieldset className="FormGroup">
-            <div className="FormRow">
-              <CardElement options={CARD_OPTIONS} />
-            </div>
-          </fieldset>
-          <button>Pay</button>
-        </form>
-      ) : (
-        <div>
-          <h2>
-            You just bought a sweet spatula congrats this is the best decision
-            of you're life
-          </h2>
-        </div>
-      )}
+      <form onSubmit={handleSubmit}>
+        <h4 className="mb-4">Pay with Stripe</h4>
+        <fieldset className="FormGroup">
+          <div className="FormRow">
+            <CardElement options={CARD_OPTIONS} />
+          </div>
+        </fieldset>
+        <Button type="primary" onClick={handleSubmit}>
+          Place an order
+        </Button>
+      </form>
     </>
   );
 }

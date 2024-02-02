@@ -33,11 +33,11 @@ const authMiddleware = (
 
   try {
     const decoded = jwt.verify(token, SIGNATURE);
-    // Assuming that your JWT payload includes a 'user' property
+
     req.user = (decoded as { user: any }).user;
     next();
   } catch (error) {
-    return res.status(401).json({ message: "Token is not valid" });
+    return res.status(401).json({ message: "Your session has been expired !" });
   }
 };
 

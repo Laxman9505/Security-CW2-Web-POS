@@ -52,14 +52,14 @@ app.use("/auth", authRouter);
 app.use("/product", authMiddleware, productRouter);
 app.use("/order", authMiddleware, orderRouter);
 
-app.use("/payment", authMiddleware, async (req: Request, res: Response) => {
+app.use("/payment", async (req: Request, res: Response) => {
   const { amount, id } = req.body;
 
   try {
     const payment = await stripe.paymentIntents.create({
       amount,
       currency: "USD",
-      description: "Spatula company",
+      description: "POS Software",
       payment_method: id,
       confirm: true,
       return_url: "http://localhost:3001", // Replace with the actual return URL
